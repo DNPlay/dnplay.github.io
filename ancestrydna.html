@@ -63,8 +63,8 @@
 	      <p><strong>How these numbers are calculated</strong></p>
 	      <p>These are <strong>not</strong> Ancestry's unrounded percentages. Ancestry doesn't share those, only the whole numbers on its site.</p>
 	      <p>Instead, Ancestry splits each of your chromosomes into small pieces and labels each piece with the region it looks most like. That's what it uses to draw the colored chromosome maps on its site. This tool counts how many pieces got each label and turns those counts into percentages.</p>
-	      <p>That's closely related to Ancestry's estimate, but it isn't the same calculation, so expect these numbers to differ from Ancestry's by about a point, sometimes more.</p>
-	      <p class="mb-0">Pieces Ancestry labels "Unassigned" are left out. Ancestry's own estimate still counts that DNA toward some of your regions, but the chromosome data doesn't say which ones. The more Unassigned DNA you have, the further these numbers can drift from Ancestry's.</p>
+	      <p>That's closely related to Ancestry's estimate, but it isn't the same calculation, so expect these numbers to differ from Ancestry's.</p>
+	      <p class="mb-0"><strong>Why is there an "Unassigned" row?</strong> Ancestry doesn't assign every piece to a region, and labels the rest "Unassigned" in this data. Ancestry's site never shows Unassigned: its estimate still counts that DNA toward some of your regions, but the chromosome data doesn't say which ones. So your other regions here will usually be a bit lower than on Ancestry's site, and the more Unassigned DNA you have, the bigger that gap.</p>
 	    </div>
 	  </div>
 	</div>
@@ -766,7 +766,6 @@
 			let result = {}
 
 			let total_length = 0;
-			let unassigned_length = 0;
 
 			for (let i = 1; i <= 2; ++i) {
 				for (let j = 1; j <= 22; ++j) {
@@ -777,12 +776,8 @@
 						// so a single-window segment like [159, 159] has length 1, not 0.
 						const length = data[segment]['windows'][1] - data[segment]['windows'][0] + 1;
 						// newer results label segments that couldn't be assigned to any region as
-						// "Unassigned". Ancestry leaves these out of its percentages, so do the same
-						// and report the unassigned amount separately below the table.
-						if (region === 'Unassigned') {
-							unassigned_length += length;
-							continue;
-						}
+						// "Unassigned". These are kept as their own row; the note above the results
+						// explains why Ancestry's site never shows them.
 						total_length += length;
 						if (region in result) {
 							result[region] += length;
@@ -822,14 +817,6 @@
 			let results_area = document.getElementById('resultTable');
 			results_area.innerHTML = '';
 			results_area.appendChild(new_table);
-
-			if (unassigned_length > 0) {
-				let note = document.createElement('p');
-				note.className = 'text-center text-muted mt-3';
-				note.textContent = 'Unassigned: ' + (100*(unassigned_length/(total_length + unassigned_length))).toFixed(2) +
-					' % of your DNA was not assigned to any region and is excluded from the percentages above.';
-				results_area.appendChild(note);
-			}
 
 			document.getElementById("instructionArea").style.display = "none";
 			document.getElementById("resultArea").style.display = "block";
