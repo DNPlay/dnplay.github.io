@@ -753,20 +753,30 @@
 			const chromosomeData = JSON.parse(json_data['data']);
 
 			let result = {}
-				
+
 			let total_length = 0;
+			let unassigned_length = 0;
 
 			for (let i = 1; i <= 2; ++i) {
 				for (let j = 1; j <= 22; ++j) {
 					const data = chromosomeData['parent' + i.toString()][j.toString()];
 					for (const segment in data) {
 						const region = data[segment]['region'];
-						const length = data[segment]['windows'][1] - data[segment]['windows'][0];
+						// window ranges are inclusive on both ends, e.g. [0, 19] then [20, 39],
+						// so a single-window segment like [159, 159] has length 1, not 0.
+						const length = data[segment]['windows'][1] - data[segment]['windows'][0] + 1;
+						// newer results label segments that couldn't be assigned to any region as
+						// "Unassigned". Ancestry leaves these out of its percentages, so do the same
+						// and report the unassigned amount separately below the table.
+						if (region === 'Unassigned') {
+							unassigned_length += length;
+							continue;
+						}
 						total_length += length;
 						if (region in result) {
-							result[region] += parseInt(length);
+							result[region] += length;
 						} else {
-							result[region] = parseInt(length);
+							result[region] = length;
 						}
 					}
 				}
@@ -801,7 +811,15 @@
 			let results_area = document.getElementById('resultTable');
 			results_area.innerHTML = '';
 			results_area.appendChild(new_table);
-			
+
+			if (unassigned_length > 0) {
+				let note = document.createElement('p');
+				note.className = 'text-center text-muted mt-3';
+				note.textContent = 'Unassigned: ' + (100*(unassigned_length/(total_length + unassigned_length))).toFixed(2) +
+					' % of your DNA was not assigned to any region and is excluded from the percentages above.';
+				results_area.appendChild(note);
+			}
+
 			document.getElementById("instructionArea").style.display = "none";
 			document.getElementById("resultArea").style.display = "block";
 			document.getElementById("instructionToggle").style.display = "block";
