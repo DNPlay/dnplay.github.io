@@ -57,7 +57,18 @@
 <body>
   <div id="resultArea" class="container mt-3" style="display: none;">
     <h2 class="text-center">Results</h2>
-	<div class="row justify-content-center mt-4">
+	<div class="row justify-content-center mt-3">
+	  <div class="col-md-8">
+	    <div id="howItWorks" class="alert alert-secondary">
+	      <p><strong>How these numbers are calculated</strong></p>
+	      <p>These are <strong>not</strong> Ancestry's unrounded percentages. Ancestry doesn't share those, only the whole numbers on its site.</p>
+	      <p>Instead, Ancestry splits each of your chromosomes into small pieces and labels each piece with the region it looks most like. That's what it uses to draw the colored chromosome maps on its site. This tool counts how many pieces got each label and turns those counts into percentages.</p>
+	      <p>That's closely related to Ancestry's estimate, but it isn't the same calculation, so expect these numbers to differ from Ancestry's by about a point, sometimes more.</p>
+	      <p class="mb-0">Pieces Ancestry labels "Unassigned" are left out. Ancestry's own estimate still counts that DNA toward some of your regions, but the chromosome data doesn't say which ones. The more Unassigned DNA you have, the further these numbers can drift from Ancestry's.</p>
+	    </div>
+	  </div>
+	</div>
+	<div class="row justify-content-center mt-2">
 	  <div id="resultTable"></div>
 	</div>
   </div>
